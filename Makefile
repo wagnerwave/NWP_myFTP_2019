@@ -10,7 +10,11 @@ D_INC	=	./include/
 
 NAME	=	myftp
 
-SRC		=	$(D_SRC)main.c
+SRC		=	$(D_SRC)error.c \
+			$(D_SRC)help.c \
+			$(D_SRC)init.c \
+			$(D_SRC)serveur.c \
+			$(D_SRC)main.c
 
 OBJ		=	$(SRC:.c=.o)
 
