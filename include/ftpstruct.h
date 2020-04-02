@@ -15,7 +15,7 @@ typedef struct ftpstruct_s {
     struct sockaddr_in sin;
     int tcp_socket;
     unsigned short port;
-    char *home
+    char *home;
 } server_t;
 
 #endif /* !FTR_STRUCT_H_ */

@@ -8,7 +8,11 @@
 #ifndef MY_FTP_H
 #define MY_FTP_H
 
+#include "ftpstruct.h"
+
 void display_help(char *binary_name);
 void error(char *msg);
+void init_serveur(server_t *serv_ftp, unsigned short port, char *pathfile);
+void start_serveur(server_t *serv_ftp);
 
 #endif /* !MY_FTP_H */

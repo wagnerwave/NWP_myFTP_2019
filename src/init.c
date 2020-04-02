@@ -9,7 +9,7 @@
 #include "myftp.h"
 #include "ftpstruct.h"
 
-init_serveur(server_t *serv_ftp, unsigned short port, char *pathfile)
+void init_serveur(server_t *serv_ftp, unsigned short port, char *pathfile)
 {
     int size_sin = 0;
 
@@ -22,8 +22,8 @@ init_serveur(server_t *serv_ftp, unsigned short port, char *pathfile)
     serv_ftp->sin.sin_port = htons(port);
     serv_ftp->sin.sin_family = AF_INET;
     size_sin = sizeof(serv_ftp->sin);
-    if (bind(serv_ftp->tcp_socket, &serv_ftp->sin, size_sin) == -1)
+    if (bind(serv_ftp->tcp_socket, (const struct sockaddr *)&serv_ftp->sin, size_sin) == -1)
         error("Error: Bind failed.\n");
-    if (listen(SOCK_STREAM, 5) == -1)
+    if (listen(serv_ftp->tcp_socket, 5) == -1)
         error("Error: listen connections of socket failed.\n");
 }

@@ -7,9 +7,10 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 void error(char *msg)
 {
-    fprintf(stderr, msg);
+    fprintf(stderr, "%s", msg);
     exit(84);
 }
