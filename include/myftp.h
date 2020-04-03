@@ -11,8 +11,10 @@
 #include "ftpstruct.h"
 
 void display_help(char *binary_name);
-void error(char *msg);
+void error_msg(char *msg);
+void error_n_quit(char *msg);
 void init_serveur(server_t *serv_ftp, unsigned short port, char *pathfile);
-void start_serveur(server_t *serv_ftp);
+void running_serveur(server_t *serv_ftp);
+void close_serveur(server_t *serv_ftp);
 
 #endif /* !MY_FTP_H */

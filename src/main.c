@@ -27,7 +27,8 @@ int main(int ac, char **av)
         return 84;
     } else {
         init_serveur(serv_ftp, (unsigned short)atoi(av[2]), av[3]);
-        start_serveur(serv_ftp);
+        running_serveur(serv_ftp);
+        close_serveur(serv_ftp);
     }
     return 0;
 }
