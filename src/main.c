@@ -23,12 +23,10 @@ int main(int ac, char **av)
         display_help(av[0]);
         return 0;
     } else if (ac < 3) {
-        display_help(av[0]);
         return 84;
     } else {
-        init_serveur(serv_ftp, (unsigned short)atoi(av[2]), av[3]);
-        running_serveur(serv_ftp);
-        close_serveur(serv_ftp);
+        init_serveur(serv_ftp, (unsigned short)atoi(av[1]), av[2]);
+        file_transfer_protocol(serv_ftp);
     }
     return 0;
 }

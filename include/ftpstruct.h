@@ -10,20 +10,29 @@
 
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/wait.h>
+#include <signal.h>
+
+#define MAX_CONNECTION_SERVER 20
 
 typedef struct user_s {
-    char username[20];
-    char password[30];
+    char *username;
+    char *password;
 } user_t;
 
 typedef struct ftpstruct_s {
     user_t user;
     struct sockaddr_in sin;
     int tcp_socket;
-    int new_tcp_socket;
     unsigned short port;
-    char *home;
+    char const *dir;
 } server_t;
+
+typedef struct command_s {
+    char *cmd;
+    int (*func)(int, int, char **);
+    char *desc;
+} command_t;
 
 typedef enum serv_status_e {
     SERVICE_READY = 120,
@@ -39,14 +48,5 @@ typedef enum serv_status_e {
     NEED_PASSWD = 331,
     NEED_USER = 332
 } serv_status_t;
-
-typedef enum status_socket_e {
-    SOCKET_NONE_INIT = 00000,
-    SOCKET_DONE = 00001,
-    SOCKET_NOT_READY = 00010,
-    SOCKET_PARTIAL = 00100,
-    SOCKET_DISCONNECTED = 01000,
-    SOCKET_ERR = 10000
-} status_socket_t;
 
 #endif /* !FTR_STRUCT_H_ */

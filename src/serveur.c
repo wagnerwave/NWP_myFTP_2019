@@ -6,42 +6,82 @@
 */
 
 #include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <signal.h>
+#include <sys/time.h>
+#include <sys/types.h>
 #include <sys/socket.h>
 #include "ftpstruct.h"
 #include "myftp.h"
 
-static status_socket_t get_status_code(server_t *serv_ftp)
+static int get_client_data(int socket)
 {
-   /* char buffer[2048] = { 0 };
-    int toto = read(serv_ftp->new_tcp_socket, buffer, 2048); */
-    return (SOCKET_NONE_INIT);
+    char buffer[1024];
+    int nbytes = read(socket, buffer, 1024);
+
+    if (nbytes < 0)
+      error_n_quit("Error: Read fail.\n");
+    else if (nbytes == 0)
+        return -1;
+    else
+        interpert_client_input(socket, buffer);
+    return 0;
 }
 
-void running_serveur(server_t *serv_ftp)
+static void client_management(int fd, fd_set *activ_group_fd)
 {
-    status_socket_t status_code = SOCKET_NONE_INIT;
-    pid_t child;
+    user_t *user = malloc(sizeof(user_t));
 
+    if (user == NULL)
+        error_n_quit("Error: Malloc for user failed.\n");
     while (1) {
-        status_code = get_status_code(serv_ftp);
-        /* if (status_code != SOCKET_DONE) {
-            error_msg("Error: accept connection failed.\n");
-            continue;
-        }
-        child = fork();
-        if (child == -1) {
-            error_msg("Error: fork failed.\n");
-            continue;
-        }
-        if (child == 0)
-            client_serveur(serv_ftp->sin);
-        else
-            return;
-        */
+        get_client_data(fd);
+    }
+    close(fd);
+    FD_CLR(fd, activ_group_fd);
+}
+
+static void connection_client(int sock, fd_set *activ_group_fd)
+{
+    char *msg_connexion = "220 Connection Establishment\n";
+    int new_tcp_socket = 0;
+    struct sockaddr_in client;
+    socklen_t addr_size = sizeof(client);
+
+    printf("New user enter in to the server\n"); // A enlever
+    new_tcp_socket = accept(sock, (struct sockaddr *)&client, &addr_size);
+    if (new_tcp_socket < 0)
+        error_n_quit("Error: Accept the serveur socket failed.\n");
+    write(new_tcp_socket, msg_connexion, strlen(msg_connexion));
+    FD_SET(new_tcp_socket, activ_group_fd);
+}
+
+static void in_the_socket(int fd, server_t *serv_ftp, fd_set *activ_group_fd)
+{
+    if (fd == serv_ftp->tcp_socket) {
+        connection_client(serv_ftp->tcp_socket, activ_group_fd);
+    } else {
+        client_management(fd, activ_group_fd);
     }
 }
 
-void close_serveur(server_t *serv_ftp)
+void file_transfer_protocol(server_t *serv_ftp)
 {
-    close(serv_ftp->tcp_socket);
+    fd_set activ_group_fd;
+    fd_set read_group_fd;
+
+    FD_ZERO(&activ_group_fd);
+    FD_SET(serv_ftp->tcp_socket, &activ_group_fd);
+    while (1) {
+        read_group_fd = activ_group_fd;
+        if (select(FD_SETSIZE, &read_group_fd, NULL, NULL, NULL) < 0)
+            error_n_quit("Error: Select failed.\n");
+        for (size_t i = 0; i < FD_SETSIZE; i++) {
+            if (FD_ISSET(i, &read_group_fd)) {
+                in_the_socket(i, serv_ftp, &activ_group_fd);
+            }
+        }
+    }
 }

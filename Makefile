@@ -10,7 +10,11 @@ D_INC	=	./include/
 
 NAME	=	myftp
 
-SRC		=	$(D_SRC)error.c \
+SRC		=	$(D_SRC)getnextline.c \
+			$(D_SRC)strtowordarray.c \
+			$(D_SRC)commands.c \
+			$(D_SRC)interpret.c \
+			$(D_SRC)error.c \
 			$(D_SRC)help.c \
 			$(D_SRC)init.c \
 			$(D_SRC)serveur.c \
@@ -18,7 +22,7 @@ SRC		=	$(D_SRC)error.c \
 
 OBJ		=	$(SRC:.c=.o)
 
-CFLAGS	+=	-W -Wall -Wextra -I$(D_INC)
+CFLAGS	+=	-W -Wall -Wextra -I$(D_INC) -g
 
 all	:	$(NAME)
 
