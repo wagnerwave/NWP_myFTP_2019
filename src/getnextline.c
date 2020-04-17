@@ -9,73 +9,68 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-static int new_strlen(char const *str, char c)
+static char *next_line(int fd, char *buff, int nb)
 {
-    int i;
+    char tmp[1024 + 1];
+    char *line = NULL;
+    int  nb_tmp = 0;
+    int  size = 0;
 
-    if (str == NULL)
-        return -1;
-    for (i = 0; str[i] != '\0' || str[i] == c; i++)
-        if (str[i] == c)
-            return i;
-    return -1;
-}
-
-static char *gnl_strndup(char const *src, int i)
-{
-    char *dest = malloc(new_strlen(src, '\0'));
-    int a = 0;
-
-    if (dest == NULL)
-        return NULL;
-    while (a != i) {
-        dest[a] = src[a];
-        a++;
+    if ((size = read(fd, tmp, 1024)) == -1)
+        return (NULL);
+    tmp[size] = '\0';
+    while (tmp[nb_tmp] && tmp[nb_tmp] != '\n' && tmp[nb_tmp++]);
+    if (size != 0 && tmp[nb_tmp] != '\n')
+        line = next_line(fd, buff, nb + nb_tmp);
+    if (tmp[nb_tmp] == '\n' || size == 0) {
+        if ((line = malloc(nb + nb_tmp + 1)) == NULL)
+            return (NULL);
+        line[nb + nb_tmp] = '\0';
+        while (size-- >= 0)
+            buff[size + 1] = tmp[size + 1];
     }
-    dest[i] = '\0';
-    return dest;
+    while (line && --nb_tmp >= 0)
+        line[nb + nb_tmp] = tmp[nb_tmp];
+    return (line);
 }
 
-static char *add_line(char *src, char *buffer)
+static void to_n(char *buff, char *line, char *tmp, int nb)
 {
-    char *dest = NULL;
-    int i = 0;
-    int j = 0;
-    int len = src ? new_strlen(src, '\0') : 0;
-    int a = buffer ? new_strlen(buffer, '\0') : 0;
+    int size = 0;
+    int i = -1;
 
-    dest = malloc(sizeof(char) * (a + len + 1));
-    if (dest == NULL)
-        return NULL;
-    for (j = 0; src && src[j]; j++)
-        dest[j] = src[j];
-    for (i = 0; buffer[i] != '\0'; i++)
-        dest[i + j] = buffer[i];
-    dest[i + j] = '\0';
-    return dest;
+    (buff[nb] == '\n') ? line[nb] = '\0' : 0;
+    while (line && nb-- > 0)
+        line[nb] = buff[nb];
+    while (tmp[++nb])
+        buff[nb] = tmp[nb];
+    while (buff[size] && buff[size++] != '\n');
+    while (buff[++i]) {
+        buff[i] = buff[i + size];
+        size = ((buff[i + size]) ? size : size - 1);
+    }
 }
 
-char *get_next_line(int fd)
+char    *get_next_line(int fd)
 {
-    char stock[1024];
-    static char *cur_line = NULL;
-    char *ret = NULL;
-    int size_r = 0;
-    int i = 0;
+    static char buff[1024 + 1];
+    char        tmp[1024 + 1];
+    char        *line = NULL;
+    int         nb = 0;
 
-    while (new_strlen(cur_line, '\n') == -1) {
-        size_r = read(fd, stock, 1024);
-        stock[size_r] = '\0';
-        if (size_r <= 0) {
-            cur_line = NULL;
-            ret = cur_line;
-            return ret;
+    if (fd == -1)
+        return (NULL);
+    tmp[0] = '\0';
+    while (buff[nb] && buff[nb] != '\n' && buff[nb++]);
+    (buff[nb] != '\n') ? line = next_line(fd, tmp, nb) : 0;
+    if ((buff[nb] == '\n') && !(line = malloc(nb + 1)))
+            return (NULL);
+    if (line && !buff[0] && !tmp[0]) {
+        if (!line[0]) {
+            free(line);
+            return (NULL);
         }
-        if ((cur_line = add_line(cur_line, stock)) == NULL)
-            return NULL;
     }
-    i = new_strlen(cur_line, '\n');
-    ret = gnl_strndup(cur_line, i);
-    cur_line = gnl_strndup(cur_line + i + 1, new_strlen(cur_line + i, '\0'));
-    return ret;
+    to_n(buff, line, tmp, nb);
+    return (line);
 }

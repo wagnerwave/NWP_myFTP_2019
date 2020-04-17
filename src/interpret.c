@@ -6,29 +6,28 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include "ftpstruct.h"
 #include "myftp.h"
 
-static char *check_command(char *input)
+void interpert_client_input(int socket, char *input, user_t *user)
 {
-    printf("check cmd");
-    for (size_t i = 0; commands[i].cmd != NULL; i++) {
-        if (strcmp(commands[i].cmd, input) == 0)
-            (command[i].func)()
-    }
-    return NULL;
-}
+    char **content = strtowordarray(input, SPACE);
+    size_t nb_space = 0;
+    size_t i = 0;
 
-void interpert_client_input(int socket, char *buffer, user_t *user)
-{
-    char **content = strtowordarray(buffer, SPACE);
-    char *cmd = cmd = check_command(content[0]);
-
-    if (cmd == NULL) {
+    while (content[nb_space])
+        nb_space++;
+    for (i = 0; commands[i].cmd != NULL; i++)
+        if (strcmp(commands[i].cmd, content[0]) == 0)
+            break;
+    if (commands[i].cmd != NULL)
+        (commands[i].func)(socket, content, nb_space, user);
+    else
         unknown_command(socket);
-        return;
-    }
-
+    for (size_t a = 0; content[a]; a++)
+        free(content[a]);
+    free(content);
 }

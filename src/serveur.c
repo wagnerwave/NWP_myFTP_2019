@@ -16,28 +16,16 @@
 #include "ftpstruct.h"
 #include "myftp.h"
 
-static int get_client_data(int socket)
-{
-    char buffer[1024];
-    int nbytes = read(socket, buffer, 1024);
-
-    if (nbytes < 0)
-      error_n_quit("Error: Read fail.\n");
-    else if (nbytes == 0)
-        return -1;
-    else
-        interpert_client_input(socket, buffer);
-    return 0;
-}
-
 static void client_management(int fd, fd_set *activ_group_fd)
 {
-    user_t *user = malloc(sizeof(user_t));
+    user_t user = {NULL, NULL};
+    char *input = NULL;
 
-    if (user == NULL)
-        error_n_quit("Error: Malloc for user failed.\n");
     while (1) {
-        get_client_data(fd);
+        input = get_next_line(fd);
+        if (input == NULL)
+            break;
+        interpert_client_input(fd, input, &user);
     }
     close(fd);
     FD_CLR(fd, activ_group_fd);
@@ -50,7 +38,6 @@ static void connection_client(int sock, fd_set *activ_group_fd)
     struct sockaddr_in client;
     socklen_t addr_size = sizeof(client);
 
-    printf("New user enter in to the server\n"); // A enlever
     new_tcp_socket = accept(sock, (struct sockaddr *)&client, &addr_size);
     if (new_tcp_socket < 0)
         error_n_quit("Error: Accept the serveur socket failed.\n");

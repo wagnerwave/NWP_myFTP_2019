@@ -5,6 +5,7 @@
 ** structure containt all commands for my ftp
 */
 
+#include <unistd.h>
 #include "myftp.h"
 
 const command_t commands[] = {

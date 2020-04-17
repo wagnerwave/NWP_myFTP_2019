@@ -7,7 +7,7 @@
 
 #include <stdlib.h>
 
-static int count_words(char *src, char delim)
+int count_words(char *src, char delim)
 {
         int nb_w = 1;
         int i = 0;
