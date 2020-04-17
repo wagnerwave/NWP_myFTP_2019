@@ -15,8 +15,7 @@ static bool check_if_user_is_connected(user_t *user)
 {
     if (user->username == NULL)
         return false;
-    if (strcmp(user->username, "anonymous") == 0 &&
-        strcmp(user->password, "") == 0)
+    if  (user->username != NULL && user->password != NULL)
         return true;
     return false;
 }
