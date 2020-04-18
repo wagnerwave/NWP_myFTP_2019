@@ -73,7 +73,7 @@ void file_transfer_protocol(server_t *serv_ftp)
         if (select(FD_SETSIZE, &read_group_fd, NULL, NULL, NULL) < 0)
             error_n_quit("Error: Select failed.\n");
         for (int sock = 0; sock < FD_SETSIZE; sock++) {
-            init_client(client[sock], sock, &activ_group_fd);
+            init_client(client[sock], sock, &activ_group_fd, serv_ftp);
             if (FD_ISSET(sock, &read_group_fd)) {
                 in_the_socket(serv_ftp, client[sock]);
             }

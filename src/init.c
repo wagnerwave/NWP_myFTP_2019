@@ -20,15 +20,17 @@ void default_client_initialisation(client_t *client)
     client->user_ok = false;
     client->user.password = NULL;
     client->user.username = NULL;
+    client->path = NULL;
 }
 
-void init_client(client_t *client, int sock, fd_set *activ_group_fd)
+void init_client(client_t *client, int sock, fd_set *activ_group_fd, server_t *serv_ftp)
 {
     client->fd = sock;
     client->group_fd = activ_group_fd;
+    client->path = serv_ftp->path;
 }
 
-void init_serveur(server_t *serv_ftp, unsigned short port, char const *pathfile)
+void init_serveur(server_t *serv_ftp, unsigned short port, char *pathfile)
 {
     int opt = 1;
     struct stat s_stat;
@@ -36,7 +38,7 @@ void init_serveur(server_t *serv_ftp, unsigned short port, char const *pathfile)
     stat(pathfile, &s_stat);
     if (!S_ISDIR(s_stat.st_mode))
         error_n_quit("Error: Pathfile incorrect.\n");
-    serv_ftp->dir = pathfile;
+    serv_ftp->path = pathfile;
     serv_ftp->port = port;
     serv_ftp->tcp_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (serv_ftp->tcp_socket < 0)

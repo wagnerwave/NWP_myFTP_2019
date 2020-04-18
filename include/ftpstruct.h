@@ -26,10 +26,11 @@ typedef struct ftpstruct_s {
     struct sockaddr_in sin;
     int tcp_socket;
     unsigned short port;
-    char const *dir;
+    char *path;
 } server_t;
 
 typedef struct client_s {
+    char *path;
     user_t user;
     int fd;
     fd_set *group_fd;

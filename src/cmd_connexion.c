@@ -60,7 +60,7 @@ void pass_connexion(client_t *client, char **input, size_t nb)
 void quit_connexion(client_t *client, char **input, size_t nb)
 {
     char *goodbye = "221 Goodbye.\r\n";
-    
+
     (void)input;
     (void)nb;
     write(client->fd, goodbye, strlen(goodbye));
