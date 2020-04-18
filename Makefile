@@ -14,7 +14,8 @@ SRC		=	$(D_SRC)getnextline.c \
 			$(D_SRC)strtowordarray.c \
 			$(D_SRC)commands.c \
 			$(D_SRC)interpret.c \
-			$(D_SRC)func_cmd.c \
+			$(D_SRC)cmd_connexion.c \
+			$(D_SRC)other_cmd.c \
 			$(D_SRC)error.c \
 			$(D_SRC)help.c \
 			$(D_SRC)init.c \
