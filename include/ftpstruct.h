@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 #include <signal.h>
 
 #define MAX_CONNECTION_SERVER 20
@@ -27,9 +28,15 @@ typedef struct ftpstruct_s {
     char const *dir;
 } server_t;
 
+typedef struct client_s {
+    user_t user;
+    int fd;
+    fd_set *group_fd;
+}  client_t;
+
 typedef struct command_s {
     char *cmd;
-    int (*func)(int, char **, size_t, user_t *);
+    void (*func)(client_t *, char **, size_t);
     char *desc;
 } command_t;
 

@@ -11,9 +11,9 @@
 const command_t commands[] = {
     {"USER", &user_connexion, "Specify user for authentication\n"},
     {"PASS", &pass_connexion, "Specify password for authentication\n"},
+    {"QUIT", &quit_connexion, "Disconnection\n"},
    /* {"CWD", &change_directory, "Change working directory\n"},
     {"CDUP", &change_pdir, "Change working directory to parent directory\n"},
-    {"QUIT", &quit, "Disconnection\n"},
     {"DELE", &delete_file, "Delete file on the server\n"},
     {"PWD", &pwd, "Print working directory\n"},
     {"PASV", &passiv_mode, "Enable \"passive\" mode for data transfer\n"},

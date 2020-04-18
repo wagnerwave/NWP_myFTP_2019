@@ -16,19 +16,23 @@
 #include "ftpstruct.h"
 #include "myftp.h"
 
-static void client_management(int fd, fd_set *activ_group_fd)
+/*
+
+    FAIRE TABLEAU DE STRUCKT AVEC CLIENT QUI CONTIENT LES USERS UTILISER LES FD COMMENT INDEX
+
+*/
+
+static void client_management(client_t *client)
 {
-    user_t user = {NULL, NULL};
     char *input = NULL;
 
-    while (1) {
-        input = get_next_line(fd);
-        if (input == NULL)
-            break;
-        interpert_client_input(fd, input, &user);
+    input = get_next_line(client->fd);
+    if (input == NULL) {
+        close(client->fd);
+        FD_CLR(client->fd, client->group_fd);
+        return;
     }
-    close(fd);
-    FD_CLR(fd, activ_group_fd);
+    interpert_client_input(client, input);
 }
 
 static void connection_client(int sock, fd_set *activ_group_fd)
@@ -45,12 +49,12 @@ static void connection_client(int sock, fd_set *activ_group_fd)
     FD_SET(new_tcp_socket, activ_group_fd);
 }
 
-static void in_the_socket(int fd, server_t *serv_ftp, fd_set *activ_group_fd)
+static void in_the_socket(server_t *serv_ftp, client_t *client)
 {
-    if (fd == serv_ftp->tcp_socket) {
-        connection_client(serv_ftp->tcp_socket, activ_group_fd);
+    if (client->fd == serv_ftp->tcp_socket) {
+        connection_client(serv_ftp->tcp_socket, client->group_fd);
     } else {
-        client_management(fd, activ_group_fd);
+        client_management(client);
     }
 }
 
@@ -58,16 +62,22 @@ void file_transfer_protocol(server_t *serv_ftp)
 {
     fd_set activ_group_fd;
     fd_set read_group_fd;
+    client_t **client = malloc(sizeof(client_t *) * (FD_SETSIZE + 1));
 
+    for (int x = 0; x < FD_SETSIZE; x++)
+        client[x] = calloc(1, sizeof(client_t));
+    if (client == NULL)
+        error_n_quit("Error: malloc client fd failed.\n");
     FD_ZERO(&activ_group_fd);
     FD_SET(serv_ftp->tcp_socket, &activ_group_fd);
     while (1) {
         read_group_fd = activ_group_fd;
         if (select(FD_SETSIZE, &read_group_fd, NULL, NULL, NULL) < 0)
             error_n_quit("Error: Select failed.\n");
-        for (size_t i = 0; i < FD_SETSIZE; i++) {
-            if (FD_ISSET(i, &read_group_fd)) {
-                in_the_socket(i, serv_ftp, &activ_group_fd);
+        for (int sock = 0; sock < FD_SETSIZE; sock++) {
+            init_client(client[sock], sock, &activ_group_fd);
+            if (FD_ISSET(sock, &read_group_fd)) {
+                in_the_socket(serv_ftp, client[sock]);
             }
         }
     }

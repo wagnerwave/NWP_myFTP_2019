@@ -12,7 +12,7 @@
 #include "ftpstruct.h"
 #include "myftp.h"
 
-void interpert_client_input(int socket, char *input, user_t *user)
+void interpert_client_input(client_t *client, char *input)
 {
     char **content = strtowordarray(input, SPACE);
     size_t nb_space = 0;
@@ -24,9 +24,9 @@ void interpert_client_input(int socket, char *input, user_t *user)
         if (strcmp(commands[i].cmd, content[0]) == 0)
             break;
     if (commands[i].cmd != NULL)
-        (commands[i].func)(socket, content, nb_space, user);
+        (commands[i].func)(client, content, nb_space);
     else
-        unknown_command(socket);
+        unknown_command(client->fd);
     for (size_t a = 0; content[a]; a++)
         free(content[a]);
     free(content);
