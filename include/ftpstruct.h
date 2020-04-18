@@ -13,6 +13,7 @@
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <signal.h>
+#include <stdbool.h>
 
 #define MAX_CONNECTION_SERVER 20
 
@@ -32,6 +33,8 @@ typedef struct client_s {
     user_t user;
     int fd;
     fd_set *group_fd;
+    bool user_ok;
+    bool pass_ok;
 }  client_t;
 
 typedef struct command_s {

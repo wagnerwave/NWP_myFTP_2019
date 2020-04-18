@@ -12,6 +12,16 @@
 #include "myftp.h"
 #include "ftpstruct.h"
 
+void default_client_initialisation(client_t *client)
+{
+    client->fd = -1;
+    client->group_fd = -1;
+    client->pass_ok = false;
+    client->user_ok = false;
+    client->user.password = NULL;
+    client->user.username = NULL;
+}
+
 void init_client(client_t *client, int sock, fd_set *activ_group_fd)
 {
     client->fd = sock;

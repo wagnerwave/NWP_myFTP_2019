@@ -16,12 +16,6 @@
 #include "ftpstruct.h"
 #include "myftp.h"
 
-/*
-
-    FAIRE TABLEAU DE STRUCKT AVEC CLIENT QUI CONTIENT LES USERS UTILISER LES FD COMMENT INDEX
-
-*/
-
 static void client_management(client_t *client)
 {
     char *input = NULL;
@@ -64,10 +58,14 @@ void file_transfer_protocol(server_t *serv_ftp)
     fd_set read_group_fd;
     client_t **client = malloc(sizeof(client_t *) * (FD_SETSIZE + 1));
 
-    for (int x = 0; x < FD_SETSIZE; x++)
-        client[x] = calloc(1, sizeof(client_t));
     if (client == NULL)
         error_n_quit("Error: malloc client fd failed.\n");
+    for (int x = 0; x < FD_SETSIZE; x++) {
+        client[x] = calloc(1, sizeof(client_t));
+        if (client[x] == NULL)
+            error_n_quit("Error: malloc client fd failed.\n");
+        default_client_initialisation(client[x]);
+    }
     FD_ZERO(&activ_group_fd);
     FD_SET(serv_ftp->tcp_socket, &activ_group_fd);
     while (1) {
