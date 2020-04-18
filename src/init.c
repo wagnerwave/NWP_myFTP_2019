@@ -15,7 +15,7 @@
 void default_client_initialisation(client_t *client)
 {
     client->fd = -1;
-    client->group_fd = -1;
+    client->group_fd = 0;
     client->pass_ok = false;
     client->user_ok = false;
     client->user.password = NULL;
