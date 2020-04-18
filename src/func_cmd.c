@@ -54,10 +54,13 @@ void pass_connexion(client_t *client, char **input, size_t nb)
         return;
     }
     client->user.password = "";
-    if (strcmp(client->user.username, "anonymous"))
+    if (strcmp(client->user.username, "anonymous") == 0)
         write(client->fd, ok, strlen(ok));
-    else
+    else {
         write(client->fd, err, strlen(err));
+        client->user.username ? free(client->user.username) : 0;
+        client->user.username = NULL;
+    }
 }
 
 void quit_connexion(client_t *client, char **input, size_t nb)
@@ -65,11 +68,9 @@ void quit_connexion(client_t *client, char **input, size_t nb)
     char *goodbye = "221 Goodbye.\n";
 
     write(client->fd, goodbye, strlen(goodbye));
-    if (client->user.username != NULL) {
-        client->user.username ? free(client->user.username) : 0;
-        client->user.username = NULL;
-        client->user.password = NULL;
-    }
+    client->user.username ? free(client->user.username) : 0;
+    client->user.username = NULL;
+    client->user.password = NULL;
     close(client->fd);
     FD_CLR(client->fd, client->group_fd);
 }
