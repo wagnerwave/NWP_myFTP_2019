@@ -11,13 +11,19 @@
 const command_t commands[] = {
     {"USER", &user_connexion, "Specify user for authentication\n"},
     {"PASS", &pass_connexion, "Specify password for authentication\n"},
+    {"QUIT", &quit_connexion, "Disconnection\n"},
     {"QUIT\r", &quit_connexion, "Disconnection\n"},
+    {"NOOP", &noop, "Do nothing\n"},
     {"NOOP\r", &noop, "Do nothing\n"},
+    {"HELP", &help, "List available commands\n"},
     {"HELP\r", &help, "List available commands\n"},
+    {"PWD", &pwd, "Print working directory\n"},
     {"PWD\r", &pwd, "Print working directory\n"},
     {"DELE", &delete_file, "Delete file on the server\n"},
     {"CWD", &change_directory, "Change working directory\n"},
+    {"CWD\r", &change_directory, "Change working directory\n"},
     {"CDUP", &change_pdir, "Change working directory to parent directory\n"},
+    {"CDUP\r", &change_pdir, "Change working directory to parent directory\n"},
     {NULL, NULL, NULL}
 };
 
