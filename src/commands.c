@@ -18,10 +18,12 @@ const command_t commands[] = {
     {"DELE", &delete_file, "Delete file on the server\n"},
     {"CWD", &change_directory, "Change working directory\n"},
     {"CDUP", &change_pdir, "Change working directory to parent directory\n"},
-    /*{"PASV\r", &passiv_mode, "Enable \"passive\" mode for data transfer\n"},
+    {NULL, NULL, NULL}
+};
+
+// Not implemented command
+/*{"PASV\r", &passiv_mode, "Enable \"passive\" mode for data transfer\n"},
     {"PORT", &activ_mode, "Enable \"active\" mode for data transfer\n"},
     {"RETR", &download, "Download file from server to client\n"},
     {"STOR", &upload, "Upload file form client to server\n"},
     {"LIST", &list_file, "List files in the current working directory\n"} */
-    {NULL, NULL, NULL}
-};

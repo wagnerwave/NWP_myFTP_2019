@@ -17,7 +17,6 @@ void user_not_connected(int socket)
     write(socket, error_msg, strlen(error_msg));
 }
 
-
 void unknown_command(int socket)
 {
     char *error_msg = "500 Syntax error or command unrecognized\n";

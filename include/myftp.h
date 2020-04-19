@@ -23,7 +23,7 @@ void unknown_command(int socket);
 
 void default_client_initialisation(client_t *client);
 void init_serveur(server_t *serv_ftp, unsigned short port, char *pathfile);
-void init_client(client_t *client, int sock, fd_set *activ_group_fd, server_t *serv_ftp);
+void init_client(client_t *client, int sock, fd_set *act_grpfd, server_t *srv);
 void file_transfer_protocol(server_t *serv_ftp);
 
 void interpert_client_input(client_t *client, char *input);
