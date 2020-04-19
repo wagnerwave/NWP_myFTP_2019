@@ -35,6 +35,7 @@ void noop(client_t *client, char **input, size_t nb);
 void help(client_t *client, char **input, size_t nb);
 void pwd(client_t *client, char **input, size_t nb);
 void delete_file(client_t *client, char **input, size_t nb);
+void change_directory(client_t *client, char **input, size_t nb);
 
 int count_words(char *src, char delim);
 char **strtowordarray(char *str, char delim);

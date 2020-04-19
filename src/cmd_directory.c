@@ -40,3 +40,22 @@ void delete_file(client_t *client, char **input, size_t nb)
     else
         write(client->fd, del_work, strlen(del_work));
 }
+
+void change_directory(client_t *client, char **input, size_t nb)
+{
+    char *err = "530 Please login with USER and PASS.\r\n";
+    char *move_dir = "250 Directory successfully changed.\r\n";
+    char *err_move = "550 Failed to change directory.\r\n";
+
+    if (client->user_ok == false || client->pass_ok == false) {
+        write(client->fd, err, strlen(err));
+        return;
+    }
+    if (chdir(input[1]) < 0)
+        write(client->fd, err_move, strlen(err_move));
+    else {
+        write(client->fd, move_dir, strlen(move_dir));
+        free(client->path);
+        client->path = strdup(input[1]);
+    }
+}
