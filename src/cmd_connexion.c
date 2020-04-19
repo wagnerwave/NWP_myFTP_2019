@@ -47,7 +47,7 @@ void pass_connexion(client_t *client, char **input, size_t nb)
         return;
     }
     client->user.password = "";
-    if (strcmp(client->user.username, "Anonymous") == 0) {
+    if (strcmp(client->user.username, "Anonymous\r") == 0) {
         write(client->fd, ok, strlen(ok));
         client->pass_ok = true;
     } else {
