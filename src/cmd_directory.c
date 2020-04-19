@@ -29,15 +29,23 @@ void delete_file(client_t *client, char **input, size_t nb)
     char *err = "530 Please login with USER and PASS.\r\n";
     char *del_fail = "550 Perminission denied.\r\n";
     char *del_work = "250 File successfully deleted.\r\n";
+    char *file = malloc(sizeof(char) * (strlen(input[1])));
 
+    if (file == NULL)
+        error_n_quit("Error: Malloc for deleting file fail.\n");
+    for (size_t i = 0; input[1][i] != '\r'; i++)
+        file[i] = input[1][i];
     if (client->user_ok == false || client->pass_ok == false) {
         write(client->fd, err, strlen(err));
         return;
     }
-    if (unlink(input[1]) < 0)
+    if (unlink(file) < 0) {
         write(client->fd, del_fail, strlen(del_fail));
-    else
+        free(file);
+    } else {
         write(client->fd, del_work, strlen(del_work));
+        free(file);
+    }
 }
 
 void change_directory(client_t *client, char **input, size_t nb)
