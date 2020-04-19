@@ -27,7 +27,7 @@ void init_client(client_t *client, int sock, fd_set *activ_group_fd, server_t *s
 {
     client->fd = sock;
     client->group_fd = activ_group_fd;
-    client->path = serv_ftp->path;
+    client->path = strdup(serv_ftp->path);
 }
 
 void init_serveur(server_t *serv_ftp, unsigned short port, char *pathfile)
