@@ -14,7 +14,7 @@
 
 void pwd(client_t *client, char **input, size_t nb)
 {
-    char *code = "257 ";
+    char *code = "257\r\n";
     char *err = "530 Please login with USER and PASS.\r\n";
 
     if (client->user_ok == false || client->pass_ok == false) {
@@ -22,7 +22,6 @@ void pwd(client_t *client, char **input, size_t nb)
         return;
     }
     write(client->fd, code, strlen(code));
-    write(client->fd, client->path, strlen(client->path));
 }
 
 void delete_file(client_t *client, char **input, size_t nb)
